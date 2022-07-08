@@ -27,7 +27,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
-import com.elvishew.xlog.XLog
+import com.elvishew.xlog.XLog;
 
 import androidx.annotation.RequiresApi;
 
