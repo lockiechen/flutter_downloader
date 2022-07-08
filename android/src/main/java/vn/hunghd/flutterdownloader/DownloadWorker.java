@@ -796,14 +796,12 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
     }
 
     private void log(String message) {
-        if (debug) {
-            XLog.d(TAG, message);
-        }
+      XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).d(TAG, message);
     }
 
     private void logError(String message) {
         if (debug) {
-            XLog.e(TAG, message);
+          XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).e(TAG, message);
         }
     }
 
