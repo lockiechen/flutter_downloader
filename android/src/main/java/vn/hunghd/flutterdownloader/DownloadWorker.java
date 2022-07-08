@@ -312,10 +312,10 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 }
 
                 log("Open connection to " + url);
-                httpConn.setConnectTimeout(15000);
-                httpConn.setReadTimeout(15000);
+                httpConn.setConnectTimeout(50000);
+                httpConn.setReadTimeout(550000);
                 httpConn.setInstanceFollowRedirects(false);   // Make the logic below easier to detect redirections
-                httpConn.setRequestProperty("User-Agent", "Mozilla/5.0...");
+                httpConn.setRequestProperty("User-Agent", "BKCI_APP");
 
                 // setup request headers if it is set
                 setupHeaders(httpConn, headers);
@@ -796,13 +796,13 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
 
     private void log(String message) {
         if (debug) {
-            Log.d(TAG, message);
+            XLog.d(TAG, message);
         }
     }
 
     private void logError(String message) {
         if (debug) {
-            Log.e(TAG, message);
+            XLog.e(TAG, message);
         }
     }
 
@@ -825,11 +825,11 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
             }
 
             public void checkClientTrusted(X509Certificate[] chain, String authType) {
-                Log.i(TAG, "checkClientTrusted");
+                XLog.i(TAG, "checkClientTrusted");
             }
 
             public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                Log.i(TAG, "checkServerTrusted");
+                XLog.i(TAG, "checkServerTrusted");
             }
         } };
 
