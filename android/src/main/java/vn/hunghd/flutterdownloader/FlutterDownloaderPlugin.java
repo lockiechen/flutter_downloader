@@ -57,6 +57,8 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
     public static final String SHARED_PREFERENCES_KEY = "vn.hunghd.downloader.pref";
     public static final String CALLBACK_DISPATCHER_HANDLE_KEY = "callback_dispatcher_handle_key";
 
+
+    public static Printer globalFilePrinter;
     private MethodChannel flutterChannel;
     private TaskDao taskDao;
     private Context context;
@@ -83,7 +85,6 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
 
     @Override
     public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
-        initXlog();
         if (call.method.equals("initialize")) {
             initialize(call, result);
         } else if (call.method.equals("registerCallback")) {
@@ -169,7 +170,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
         long callbackHandle = Long.parseLong(args.get(0).toString());
         debugMode = Integer.parseInt(args.get(1).toString());
         ignoreSsl = Integer.parseInt(args.get(2).toString());
-
+        initXlog();
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         pref.edit().putLong(CALLBACK_DISPATCHER_HANDLE_KEY, callbackHandle).apply();
 
@@ -411,7 +412,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
 
     private void initXlog() {
       LogConfiguration config = new LogConfiguration.Builder()
-          .logLevel(LogLevel.ALL)             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
+          .logLevel(LogLevel.NONE)             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
           // .tag(getString(R.string.global_tag))                   // Specify TAG, default: "X-LOG"
           // .enableThreadInfo()                                 // Enable thread info, disabled by default
           // .enableStackTrace(2)                                // Enable stack trace info with depth 2, disabled by default
@@ -424,8 +425,8 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
           // .borderFormatter(new MyBoardFormatter())            // Default: DefaultBorderFormatter
           // .addObjectFormatter(AnyClass.class,                 // Add formatter for specific class of object
           //     new AnyClassObjectFormatter())                  // Use Object.toString() by default
-          .addInterceptor(new BlacklistTagsFilterInterceptor(    // Add blacklist tags filter
-              "blacklist1", "blacklist2", "blacklist3"))
+          // .addInterceptor(new BlacklistTagsFilterInterceptor(    // Add blacklist tags filter
+          //     "blacklist1", "blacklist2", "blacklist3"))
           // .addInterceptor(new WhitelistTagsFilterInterceptor( // Add whitelist tags filter
           //     "whitelist1", "whitelist2", "whitelist3"))
           // .addInterceptor(new MyInterceptor())                // Add a log interceptor
@@ -461,7 +462,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
           filePrinter);
   
       // For future usage: partial usage in MainActivity.
-      // globalFilePrinter = filePrinter;
+      globalFilePrinter = filePrinter;
   
       // Intercept all logs(including logs logged by third party modules/libraries) and print them to file.
       // LibCat.config(true, filePrinter);
