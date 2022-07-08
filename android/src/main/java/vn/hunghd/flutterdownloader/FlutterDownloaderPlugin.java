@@ -72,7 +72,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
             if (flutterChannel != null) {
                 return;
             }
-            initXlog();
+
             this.context = applicationContext;
             flutterChannel = new MethodChannel(messenger, CHANNEL);
             flutterChannel.setMethodCallHandler(this);
@@ -83,6 +83,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
 
     @Override
     public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
+        initXlog();
         if (call.method.equals("initialize")) {
             initialize(call, result);
         } else if (call.method.equals("registerCallback")) {
