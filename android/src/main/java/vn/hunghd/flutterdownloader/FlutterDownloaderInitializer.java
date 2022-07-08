@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import com.elvishew.xlog.XLog
 
 import java.util.concurrent.Executors;
 
