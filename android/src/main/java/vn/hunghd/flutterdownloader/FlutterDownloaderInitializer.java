@@ -81,12 +81,12 @@ public class FlutterDownloaderInitializer extends ContentProvider {
                     PackageManager.GET_META_DATA);
             Bundle bundle = pi.metaData;
             int max = bundle.getInt("vn.hunghd.flutterdownloader.MAX_CONCURRENT_TASKS", DEFAULT_MAX_CONCURRENT_TASKS);
-            XLog.d(TAG, "MAX_CONCURRENT_TASKS = " + max);
+            XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).d(TAG, "MAX_CONCURRENT_TASKS = " + max);
             return max;
         } catch (PackageManager.NameNotFoundException e) {
-            XLog.e(TAG, "Failed to load meta-data, NameNotFound: " + e.getMessage());
+            XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).e(TAG, "Failed to load meta-data, NameNotFound: " + e.getMessage());
         } catch (NullPointerException e) {
-            XLog.e(TAG, "Failed to load meta-data, NullPointer: " + e.getMessage());
+            XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).e(TAG, "Failed to load meta-data, NullPointer: " + e.getMessage());
         }
         return DEFAULT_MAX_CONCURRENT_TASKS;
     }

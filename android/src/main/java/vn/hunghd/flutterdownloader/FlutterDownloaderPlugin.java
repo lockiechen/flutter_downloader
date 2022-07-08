@@ -168,9 +168,9 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
     private void initialize(MethodCall call, MethodChannel.Result result) {
         List args = (List) call.arguments;
         long callbackHandle = Long.parseLong(args.get(0).toString());
+        initXlog();
         debugMode = Integer.parseInt(args.get(1).toString());
         ignoreSsl = Integer.parseInt(args.get(2).toString());
-        initXlog();
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         pref.edit().putLong(CALLBACK_DISPATCHER_HANDLE_KEY, callbackHandle).apply();
 
@@ -412,7 +412,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
 
     private void initXlog() {
       LogConfiguration config = new LogConfiguration.Builder()
-          .logLevel(LogLevel.NONE)             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
+          .logLevel(LogLevel.ALL)             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
           // .tag(getString(R.string.global_tag))                   // Specify TAG, default: "X-LOG"
           // .enableThreadInfo()                                 // Enable thread info, disabled by default
           // .enableStackTrace(2)                                // Enable stack trace info with depth 2, disabled by default
@@ -435,7 +435,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
       Printer androidPrinter = new AndroidPrinter();             // Printer that print the log using android.util.Log
       Printer filePrinter = new FilePrinter                      // Printer that print the log to the file system
           .Builder(new File(context.getExternalCacheDir().getAbsolutePath(), "devops-download-log").getPath())       // Specify the path to save log file
-          .fileNameGenerator(new DateFileNameGenerator())        // Default: ChangelessFileNameGenerator("log")
+          .fileNameGenerator(new DateFileNameGenerator() + ".log")        // Default: ChangelessFileNameGenerator("log")
           // .backupStrategy(new MyBackupStrategy())             // Default: FileSizeBackupStrategy(1024 * 1024)
           // .cleanStrategy(new FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
           .flattener(new ClassicFlattener())                     // Default: DefaultFlattener

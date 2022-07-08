@@ -824,11 +824,11 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
             }
 
             public void checkClientTrusted(X509Certificate[] chain, String authType) {
-                XLog.i(TAG, "checkClientTrusted");
+              XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).i(TAG, "checkClientTrusted");
             }
 
             public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                XLog.i(TAG, "checkServerTrusted");
+              XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).i(TAG, "checkServerTrusted");
             }
         } };
 
