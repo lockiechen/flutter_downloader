@@ -28,6 +28,9 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
+import android.app.Application;
+import android.os.Build;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -45,7 +48,6 @@ import com.elvishew.xlog.printer.file.FilePrinter;
 import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
 import com.elvishew.xlog.printer.file.writer.SimpleWriter;
 
-import java.io.File;
 
 
 public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin {
@@ -409,7 +411,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
     private void initXlog() {
       LogConfiguration config = new LogConfiguration.Builder()
           .logLevel(LogLevel.ALL)             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
-          .tag(getString(R.string.global_tag))                   // Specify TAG, default: "X-LOG"
+          // .tag(getString(R.string.global_tag))                   // Specify TAG, default: "X-LOG"
           // .enableThreadInfo()                                 // Enable thread info, disabled by default
           // .enableStackTrace(2)                                // Enable stack trace info with depth 2, disabled by default
           // .enableBorder()                                     // Enable border, disabled by default
