@@ -233,6 +233,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
             taskDao = null;
             return Result.success();
         } catch (Exception e) {
+            log( "doWork() " + e.getMessage());
             updateNotification(context, filename == null ? url : filename, DownloadStatus.FAILED, -1, null, true);
             taskDao.updateTask(getId().toString(), DownloadStatus.FAILED, lastProgress);
             e.printStackTrace();
@@ -253,6 +254,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 }
                 conn.setDoInput(true);
             } catch (JSONException e) {
+                log( "setHeader() " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -460,6 +462,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
 
                 log(isStopped() ? "Download canceled" : "File downloaded");
             } else {
+
                 DownloadTask task = taskDao.loadTask(getId().toString());
                 int status = isStopped() ? (task.resumable ? DownloadStatus.PAUSED : DownloadStatus.CANCELED) : DownloadStatus.FAILED;
                 taskDao.updateTask(getId().toString(), status, lastProgress);
@@ -467,6 +470,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 log(isStopped() ? "Download canceled" : "Server replied HTTP code: " + responseCode);
             }
         } catch (IOException e) {
+            log("downloadFile() " + e.getMessage());
             taskDao.updateTask(getId().toString(), DownloadStatus.FAILED, lastProgress);
             updateNotification(context, filename == null ? fileURL : filename, DownloadStatus.FAILED, -1, null, true);
             e.printStackTrace();

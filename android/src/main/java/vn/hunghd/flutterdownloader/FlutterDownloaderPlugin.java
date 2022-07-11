@@ -56,6 +56,8 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
 
     public static final String SHARED_PREFERENCES_KEY = "vn.hunghd.downloader.pref";
     public static final String CALLBACK_DISPATCHER_HANDLE_KEY = "callback_dispatcher_handle_key";
+    private static final long MAX_TIME = 1000 * 60 * 60 * 24 * 7; // 7 days
+
 
 
     public static Printer globalFilePrinter;
@@ -168,7 +170,11 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
     private void initialize(MethodCall call, MethodChannel.Result result) {
         List args = (List) call.arguments;
         long callbackHandle = Long.parseLong(args.get(0).toString());
-        initXlog();
+        if (globalFilePrinter == null) {
+            android.util.Log.d(TAG, "initialize: init xlog");
+            initXlog();
+        }
+
         debugMode = Integer.parseInt(args.get(1).toString());
         ignoreSsl = Integer.parseInt(args.get(2).toString());
         SharedPreferences pref = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -435,9 +441,9 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
       Printer androidPrinter = new AndroidPrinter();             // Printer that print the log using android.util.Log
       Printer filePrinter = new FilePrinter                      // Printer that print the log to the file system
           .Builder(new File(context.getExternalCacheDir().getAbsolutePath(), "devops-download-log").getPath())       // Specify the path to save log file
-          // .fileNameGenerator(new ChangelessFileNameGenerator()) // Default: ChangelessFileNameGenerator("log")
+          .fileNameGenerator(new FileNameGenerator()) // Default: ChangelessFileNameGenerator("log")
           // .backupStrategy(new MyBackupStrategy())             // Default: FileSizeBackupStrategy(1024 * 1024)
-          // .cleanStrategy(new FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
+           .cleanStrategy(new FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
           .flattener(new ClassicFlattener())                     // Default: DefaultFlattener
           .writer(new SimpleWriter() {                           // Default: SimpleWriter
             @Override
