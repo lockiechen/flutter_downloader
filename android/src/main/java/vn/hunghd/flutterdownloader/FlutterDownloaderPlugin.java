@@ -47,7 +47,7 @@ import com.elvishew.xlog.printer.Printer;
 import com.elvishew.xlog.printer.file.FilePrinter;
 import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
 import com.elvishew.xlog.printer.file.writer.SimpleWriter;
-import com.elvishew.xlog.printer.file.clean;
+import com.elvishew.xlog.printer.file.clean.*;
 
 
 
