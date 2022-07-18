@@ -408,7 +408,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                         outputStream = new FileOutputStream(file, false);
                     }
                 }
-
+                log("savedFilePath " + savedFilePath);
                 long count = downloadedBytes;
                 int bytesRead = -1;
                 byte[] buffer = new byte[BUFFER_SIZE];
@@ -417,7 +417,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                     count += bytesRead;
                     int progress = (int) ((count * 100) / (contentLength + downloadedBytes));
                     outputStream.write(buffer, 0, bytesRead);
-
+                    log("onProgress " + savedFilePath + ":" + progress.toString());
                     if ((lastProgress == 0 || progress > (lastProgress + step) || progress == 100)
                             && progress != lastProgress) {
                         lastProgress = progress;
