@@ -315,7 +315,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 }
 
                 log("Open connection to " + url);
-                httpConn.setConnectTimeout(50000);
+                httpConn.setConnectTimeout(120000);
                 httpConn.setReadTimeout(550000);
                 httpConn.setInstanceFollowRedirects(false);   // Make the logic below easier to detect redirections
                 httpConn.setRequestProperty("User-Agent", "BKCI_APP");
