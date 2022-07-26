@@ -168,7 +168,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
         String filename = getInputData().getString(ARG_FILE_NAME);
 
         DownloadTask task = taskDao.loadTask(getId().toString());
-        log("flutter download worker stopped" + url + ":" + filename);
+        log("flutter download worker stopped" + task.toString());
         if (task != null && task.status == DownloadStatus.ENQUEUED) {
             updateNotification(context, filename == null ? url : filename, DownloadStatus.CANCELED, -1, null, true);
             taskDao.updateTask(getId().toString(), DownloadStatus.CANCELED, lastProgress);
@@ -328,7 +328,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 setupHeaders(httpConn, headers);
                 // try to continue downloading a file from its partial downloaded data.
                 if (isResume) {
-                    log("resume download" + url + "\n" + savedDir)
+                    log("resume download" + url + "\n" + savedDir);
                     downloadedBytes = setupPartialDownloadedDataHeader(httpConn, filename, savedDir);
                 }
 
@@ -436,7 +436,6 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                         updateNotification(context, filename, DownloadStatus.RUNNING, progress, null, false);
                     }
                 }
-
                 DownloadTask task = taskDao.loadTask(getId().toString());
                 int progress = isStopped() && task.resumable ? lastProgress : 100;
                 int status = isStopped() ? (task.resumable ? DownloadStatus.PAUSED : DownloadStatus.CANCELED) : DownloadStatus.COMPLETE;
@@ -465,7 +464,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 taskDao.updateTask(getId().toString(), status, progress);
                 updateNotification(context, filename, status, progress, pendingIntent, true);
 
-                log(isStopped() ? "Download canceled" : "File downloaded");
+                log(isStopped() ? "Download canceled:" + task.toString() : "File downloaded");
             } else {
 
                 DownloadTask task = taskDao.loadTask(getId().toString());

@@ -36,6 +36,6 @@ public class DownloadTask {
 
     @Override
     public String toString() {
-        return "DownloadTask{taskId=" + taskId + ",status=" + status + ",progress=" + progress + ",url=" + url + ",filename=" + filename + ",savedDir=" + savedDir + ",headers=" + headers + ", saveInPublicStorage= " + saveInPublicStorage + "}";
+        return "DownloadTask{taskId=" + taskId + ",resumable=" + String.valueOf(resumable) + ",status=" + status + ",progress=" + progress + ",url=" + url + ",filename=" + filename + ",savedDir=" + savedDir + ",headers=" + headers + ", saveInPublicStorage= " + saveInPublicStorage + "}";
     }
 }
