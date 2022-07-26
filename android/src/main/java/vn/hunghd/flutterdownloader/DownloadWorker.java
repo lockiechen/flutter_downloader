@@ -168,9 +168,13 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
         String filename = getInputData().getString(ARG_FILE_NAME);
 
         DownloadTask task = taskDao.loadTask(getId().toString());
+        log("flutter download worker stopped" + url + ":" + filename);
         if (task != null && task.status == DownloadStatus.ENQUEUED) {
             updateNotification(context, filename == null ? url : filename, DownloadStatus.CANCELED, -1, null, true);
             taskDao.updateTask(getId().toString(), DownloadStatus.CANCELED, lastProgress);
+        } else if (task != null) {
+            updateNotification(context, filename == null ? url : filename, DownloadStatus.PAUSED, lastProgress, null, false);
+            taskDao.updateTask(getId().toString(), DownloadStatus.PAUSED, lastProgress);
         }
     }
 
@@ -324,6 +328,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 setupHeaders(httpConn, headers);
                 // try to continue downloading a file from its partial downloaded data.
                 if (isResume) {
+                    log("resume download" + url + "\n" + savedDir)
                     downloadedBytes = setupPartialDownloadedDataHeader(httpConn, filename, savedDir);
                 }
 
