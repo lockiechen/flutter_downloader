@@ -173,8 +173,8 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
             updateNotification(context, filename == null ? url : filename, DownloadStatus.CANCELED, -1, null, true);
             taskDao.updateTask(getId().toString(), DownloadStatus.CANCELED, lastProgress);
         } else if (task != null) {
-            log("onStopped: " + getId().toString() + "task: " + task.toString());
-            taskDao.updateTask(getId().toString(), true);
+          taskDao.updateTask(getId().toString(), true);
+          log("onStopped: " + getId().toString() + " \n task: " + task.toString());
         }
     }
 
@@ -440,7 +440,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 log("after stoped task: " + task.toString());
                 int progress = isStopped() ? lastProgress : 100;
                 int status = isStopped() ? (task.resumable ? DownloadStatus.PAUSED : DownloadStatus.CANCELED) : DownloadStatus.COMPLETE;
-                log("resumable: " + String.valueOf(task.resumable) + "isStopped" + String.valueOf(isStopped()) );
+                log("resumable: " + String.valueOf(task.resumable) + "  isStopped: " + String.valueOf(isStopped()) );
                 int storage = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
                 PendingIntent pendingIntent = null;
                 if (status == DownloadStatus.COMPLETE) {
