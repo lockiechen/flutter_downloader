@@ -168,13 +168,12 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
         String filename = getInputData().getString(ARG_FILE_NAME);
 
         DownloadTask task = taskDao.loadTask(getId().toString());
-        log("flutter download worker stopped" + task.toString());
+        log("flutter download worker stopped: " + task.toString());
         if (task != null && task.status == DownloadStatus.ENQUEUED) {
             updateNotification(context, filename == null ? url : filename, DownloadStatus.CANCELED, -1, null, true);
             taskDao.updateTask(getId().toString(), DownloadStatus.CANCELED, lastProgress);
         } else if (task != null) {
-            updateNotification(context, filename == null ? url : filename, DownloadStatus.PAUSED, lastProgress, null, false);
-            taskDao.updateTask(getId().toString(), DownloadStatus.PAUSED, lastProgress);
+            taskDao.updateTask(getId().toString(), true);
         }
     }
 
