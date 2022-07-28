@@ -437,7 +437,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                     }
                 }
                 DownloadTask task = taskDao.loadTask(getId().toString());
-                log("after stoped task: " + + task.toString());
+                log("after stoped task: " + task.toString());
                 int progress = isStopped() ? lastProgress : 100;
                 int status = isStopped() ? (task.resumable ? DownloadStatus.PAUSED : DownloadStatus.CANCELED) : DownloadStatus.COMPLETE;
                 log("resumable: " + String.valueOf(task.resumable) + "isStopped" + String.valueOf(isStopped) );
