@@ -804,12 +804,12 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
 
     private void log(String message) {
       XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).d(message);
-      XLog.d(TAG, message);
+      Log.d(TAG, message);
     }
 
     private void logError(String message) {
       XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).e(message);
-      XLog.e(TAG, message);
+      Log.e(TAG, message);
     }
 
     public interface CallbackUri {
