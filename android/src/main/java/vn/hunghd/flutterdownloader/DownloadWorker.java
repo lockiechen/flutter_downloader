@@ -191,7 +191,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
         String headers = getInputData().getString(ARG_HEADERS);
         boolean isResume = getInputData().getBoolean(ARG_IS_RESUME, false);
         debug = getInputData().getBoolean(ARG_DEBUG, false);
-        step = getInputData().getInt(ARG_STEP, 5);
+        step = getInputData().getInt(ARG_STEP, 10);
         ignoreSsl = getInputData().getBoolean(ARG_IGNORESSL, false);
 
         Resources res = getApplicationContext().getResources();
@@ -328,7 +328,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 setupHeaders(httpConn, headers);
                 // try to continue downloading a file from its partial downloaded data.
                 if (isResume) {
-                    log("resume download" + url + "\n" + savedDir);
+                    log("resume download: " + url + "\n" + savedDir);
                     downloadedBytes = setupPartialDownloadedDataHeader(httpConn, filename, savedDir);
                 }
 
