@@ -279,6 +279,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
                 String partialFilePath = task.savedDir + File.separator + filename;
                 File partialFile = new File(partialFilePath);
                 if (partialFile.exists()) {
+                
                     WorkRequest request = buildRequest(task.url, task.savedDir, task.filename,
                             task.headers, task.showNotification, task.openFileFromNotification,
                             true, requiresStorageNotLow, task.saveInPublicStorage);
@@ -442,19 +443,19 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
       Printer androidPrinter = new AndroidPrinter();             // Printer that print the log using android.util.Log
       Printer filePrinter = new FilePrinter                      // Printer that print the log to the file system
           .Builder(new File(context.getExternalCacheDir().getAbsolutePath(), "devops-download-log").getPath())       // Specify the path to save log file
-          .fileNameGenerator(new DateFileNameGenerator()) // Default: ChangelessFileNameGenerator("log")
+          // .fileNameGenerator(new DateFileNameGenerator()) // Default: ChangelessFileNameGenerator("log")
           // .backupStrategy(new MyBackupStrategy())             // Default: FileSizeBackupStrategy(1024 * 1024)
-           .cleanStrategy(new FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
+          //  .cleanStrategy(new FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
           .flattener(new ClassicFlattener())                     // Default: DefaultFlattener
           .writer(new SimpleWriter() {                           // Default: SimpleWriter
             @Override
             public void onNewFileCreated(File file) {
               super.onNewFileCreated(file);
               final String header = "\n>>>>>>>>>>>>>>>> File Header >>>>>>>>>>>>>>>>" +
-                      "\nDevice Manufacturer: " + Build.MANUFACTURER +
-                      "\nDevice Model       : " + Build.MODEL +
-                      "\nAndroid Version    : " + Build.VERSION.RELEASE +
-                      "\nAndroid SDK        : " + Build.VERSION.SDK_INT +
+                      // "\nDevice Manufacturer: " + Build.MANUFACTURER +
+                      // "\nDevice Model       : " + Build.MODEL +
+                      // "\nAndroid Version    : " + Build.VERSION.RELEASE +
+                      // "\nAndroid SDK        : " + Build.VERSION.SDK_INT +
                       // "\nApp VersionName    : " + BuildConfig.VERSION_NAME +
                       // "\nApp VersionCode    : " + BuildConfig.VERSION_CODE +
                       "\n<<<<<<<<<<<<<<<< File Header <<<<<<<<<<<<<<<<\n\n";
