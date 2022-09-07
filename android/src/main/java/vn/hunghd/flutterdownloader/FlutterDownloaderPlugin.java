@@ -202,6 +202,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
         boolean saveInPublicStorage = call.argument("save_in_public_storage");
         WorkRequest request = buildRequest(url, savedDir, filename, headers, showNotification,
                 openFileFromNotification, false, requiresStorageNotLow, saveInPublicStorage);
+        Log("flutter_downloader enqueue:" + filename);
         WorkManager.getInstance(context).enqueue(request);
         String taskId = request.getId().toString();
         result.success(taskId);
