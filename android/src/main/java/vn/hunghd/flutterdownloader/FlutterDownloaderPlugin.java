@@ -37,6 +37,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 
+import android.util.Log;
 import com.elvishew.xlog.LogConfiguration;
 import com.elvishew.xlog.LogLevel;
 import com.elvishew.xlog.XLog;
@@ -172,7 +173,8 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
         List args = (List) call.arguments;
         long callbackHandle = Long.parseLong(args.get(0).toString());
         if (globalFilePrinter == null) {
-            android.util.Log.d(TAG, "initialize: init xlog");
+            
+          android.util.Log.d(TAG, "initialize: init xlog");
             initXlog();
         }
 
@@ -202,7 +204,7 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
         boolean saveInPublicStorage = call.argument("save_in_public_storage");
         WorkRequest request = buildRequest(url, savedDir, filename, headers, showNotification,
                 openFileFromNotification, false, requiresStorageNotLow, saveInPublicStorage);
-        Log("flutter_downloader enqueue:" + filename);
+        Log.d(TAG, "flutter_downloader enqueue:" + filename);
         WorkManager.getInstance(context).enqueue(request);
         String taskId = request.getId().toString();
         result.success(taskId);
@@ -441,7 +443,8 @@ public class FlutterDownloaderPlugin implements MethodCallHandler, FlutterPlugin
           // .addInterceptor(new MyInterceptor())                // Add a log interceptor
           .build();
   
-      Printer androidPrinter = new AndroidPrinter();             // Printer that print the log using android.util.Log
+      
+          Printer androidPrinter = new AndroidPrinter();             // Printer that print the log using android.util.Log
       Printer filePrinter = new FilePrinter                      // Printer that print the log to the file system
           .Builder(new File(context.getExternalCacheDir().getAbsolutePath(), "devops-download-log").getPath())       // Specify the path to save log file
           // .fileNameGenerator(new DateFileNameGenerator()) // Default: ChangelessFileNameGenerator("log")
