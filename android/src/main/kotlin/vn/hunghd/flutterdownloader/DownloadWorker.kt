@@ -50,10 +50,13 @@ import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import io.github.oshai.KotlinLogging
+
 
 class DownloadWorker(context: Context, params: WorkerParameters) :
     Worker(context, params),
     MethodChannel.MethodCallHandler {
+    private val logger = KotlinLogging.logger {}
     private val charsetPattern = Pattern.compile("(?i)\\bcharset=\\s*\"?([^\\s;\"]*)")
     private val filenameStarPattern =
         Pattern.compile("(?i)\\bfilename\\*=([^']+)'([^']*)'\"?([^\"]+)\"?")
@@ -306,7 +309,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                 httpConn.connectTimeout = timeout
                 httpConn.readTimeout = timeout
                 httpConn.instanceFollowRedirects = false // Make the logic below easier to detect redirections
-                httpConn.setRequestProperty("User-Agent", "Mozilla/5.0...")
+                httpConn.setRequestProperty("User-Agent", "BKCI_APP");
 
                 // setup request headers if it is set
                 setupHeaders(httpConn, headers)
@@ -814,13 +817,13 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
 
     private fun log(message: String) {
         if (debug) {
-            Log.d(TAG, message)
+            logger.info(TAG, message)
         }
     }
 
     private fun logError(message: String) {
         if (debug) {
-            Log.e(TAG, message)
+            logger.error(exception) { message }
         }
     }
 
