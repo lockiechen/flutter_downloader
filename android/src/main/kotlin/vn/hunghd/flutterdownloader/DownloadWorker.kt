@@ -50,13 +50,11 @@ import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
-import io.github.oshai.KotlinLogging
 
 
 class DownloadWorker(context: Context, params: WorkerParameters) :
     Worker(context, params),
     MethodChannel.MethodCallHandler {
-    private val logger = KotlinLogging.logger {}
     private val charsetPattern = Pattern.compile("(?i)\\bcharset=\\s*\"?([^\\s;\"]*)")
     private val filenameStarPattern =
         Pattern.compile("(?i)\\bfilename\\*=([^']+)'([^']*)'\"?([^\"]+)\"?")
@@ -817,13 +815,13 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
 
     private fun log(message: String) {
         if (debug) {
-            logger.info(TAG, message)
+            Log.i(TAG, message)
         }
     }
 
     private fun logError(message: String) {
         if (debug) {
-            logger.error(exception) { message }
+            Log.e(TAG, message)
         }
     }
 
