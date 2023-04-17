@@ -56,9 +56,9 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
             if (flutterChannel != null) {
                 return
             }
-            LogConfiguration config = new LogConfiguration.Builder()
-                .logLevel(BuildConfig.DEBUG ? LogLevel.ALL             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
-                : LogLevel.NONE)
+            LogConfiguration config = new LogConfiguration
+                .Builder()
+                .logLevel(LogLevel.ALL) // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
                 .build()
                 
             Printer filePrinter = new FilePrinter.Builder(new File(getExternalCacheDir().getAbsolutePath(), "log").getPath())       // Specify the path to save log file
