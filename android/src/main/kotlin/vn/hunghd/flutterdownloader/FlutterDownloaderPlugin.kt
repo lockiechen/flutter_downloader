@@ -23,17 +23,15 @@ import java.io.File
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-import com.elvishew.xlog.LogConfiguration;
-import com.elvishew.xlog.LogLevel;
-import com.elvishew.xlog.XLog;
-import com.elvishew.xlog.flattener.ClassicFlattener;
-import com.elvishew.xlog.interceptor.BlacklistTagsFilterInterceptor;
-import com.elvishew.xlog.libcat.LibCat;
-import com.elvishew.xlog.printer.AndroidPrinter;
-import com.elvishew.xlog.printer.Printer;
-import com.elvishew.xlog.printer.file.FilePrinter;
-import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
-import com.elvishew.xlog.printer.file.writer.SimpleWriter;
+// import com.elvishew.xlog.LogConfiguration;
+// import com.elvishew.xlog.LogLevel;
+// import com.elvishew.xlog.XLog;
+// import com.elvishew.xlog.flattener.ClassicFlattener;
+// import com.elvishew.xlog.libcat.LibCat;
+// import com.elvishew.xlog.printer.Printer;
+// import com.elvishew.xlog.printer.file.FilePrinter;
+// import com.elvishew.xlog.printer.file.naming.DateFileNameGenerator;
+// import com.elvishew.xlog.printer.file.writer.SimpleWriter;
 
 private const val invalidTaskId = "invalid_task_id"
 private const val invalidStatus = "invalid_status"
@@ -48,7 +46,7 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
     private var debugMode = 0
     private var ignoreSsl = 0
     private val initializationLock = Any()
-    private static final long MAX_TIME = 1000 * 60 * 60 * 24 * 2; // two days
+    private val MAX_TIME = 1000 * 60 * 60 * 24 * 2; // two days
 
 
     private fun onAttachedToEngine(applicationContext: Context?, messenger: BinaryMessenger) {
@@ -56,35 +54,34 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
             if (flutterChannel != null) {
                 return
             }
-            LogConfiguration config = new LogConfiguration
-                .Builder()
-                .logLevel(LogLevel.ALL) // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
-                .build()
-                
-            Printer filePrinter = new FilePrinter.Builder(new File(getExternalCacheDir().getAbsolutePath(), "log").getPath())       // Specify the path to save log file
-                .fileNameGenerator(new DateFileNameGenerator())        // Default: ChangelessFileNameGenerator("log")
-                // .backupStrategy(new MyBackupStrategy())             // Default: FileSizeBackupStrategy(1024 * 1024)
-                .cleanStrategy(new FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
-                .flattener(new ClassicFlattener())                     // Default: DefaultFlattener
-                .writer(new SimpleWriter() {                           // Default: SimpleWriter
-                    @Override
-                    public void onNewFileCreated(File file) {
-                        super.onNewFileCreated(file);
-                        final String header = "\n>>>>>>>>>>>>>>>> File Header >>>>>>>>>>>>>>>>" +
-                                "\nDevice Manufacturer: " + Build.MANUFACTURER +
-                                "\nDevice Model       : " + Build.MODEL +
-                                "\nAndroid Version    : " + Build.VERSION.RELEASE +
-                                "\nAndroid SDK        : " + Build.VERSION.SDK_INT +
-                                "\nApp VersionName    : " + BuildConfig.VERSION_NAME +
-                                "\nApp VersionCode    : " + BuildConfig.VERSION_CODE +
-                                "\n<<<<<<<<<<<<<<<< File Header <<<<<<<<<<<<<<<<\n\n";
-                        appendLog(header);
-                    }
-                })
-                .build();
+            // LogConfiguration config = LogConfiguration.builder
+            //     .logLevel(LogLevel.ALL) // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
+            //     .build()
 
-            XLog.init(config, filePrinter);
-            LibCat.config(true, filePrinter);
+                
+            // Printer filePrinter = FilePrinter.Builder(File(getExternalCacheDir().getAbsolutePath(), "log").getPath())       // Specify the path to save log file
+            //     .fileNameGenerator(DateFileNameGenerator())        // Default: ChangelessFileNameGenerator("log")
+            //     // .backupStrategy(new MyBackupStrategy())             // Default: FileSizeBackupStrategy(1024 * 1024)
+            //     .cleanStrategy(FileLastModifiedCleanStrategy(MAX_TIME))     // Default: NeverCleanStrategy()
+            //     .flattener(ClassicFlattener())                     // Default: DefaultFlattener
+            //     .writer(SimpleWriter() {                           // Default: SimpleWriter
+            //         override fun onNewFileCreated(file: File) {
+            //             super.onNewFileCreated(file);
+            //             val header = "\n>>>>>>>>>>>>>>>> File Header >>>>>>>>>>>>>>>>" +
+            //                     "\nDevice Manufacturer: " + Build.MANUFACTURER +
+            //                     "\nDevice Model       : " + Build.MODEL +
+            //                     "\nAndroid Version    : " + Build.VERSION.RELEASE +
+            //                     "\nAndroid SDK        : " + Build.VERSION.SDK_INT +
+            //                     "\nApp VersionName    : " + BuildConfig.VERSION_NAME +
+            //                     "\nApp VersionCode    : " + BuildConfig.VERSION_CODE +
+            //                     "\n<<<<<<<<<<<<<<<< File Header <<<<<<<<<<<<<<<<\n\n";
+            //             appendLog(header);
+            //         }
+            //     })
+            //     .build();
+
+            // XLog.init(config, filePrinter);
+            // LibCat.config(true, filePrinter);
 
             context = applicationContext
             flutterChannel = MethodChannel(messenger, CHANNEL)
