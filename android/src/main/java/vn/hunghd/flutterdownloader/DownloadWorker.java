@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.elvishew.xlog.XLog;
 
 import androidx.annotation.RequiresApi;
@@ -806,7 +807,6 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
     }
 
     private void log(String message) {
-      Log.d(message);
       XLog.printers(FlutterDownloaderPlugin.globalFilePrinter).d(message);
     }
 
