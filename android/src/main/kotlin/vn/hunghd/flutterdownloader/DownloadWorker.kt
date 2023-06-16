@@ -184,7 +184,9 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             inputData.getBoolean(ARG_OPEN_FILE_FROM_NOTIFICATION, false)
         saveInPublicStorage = inputData.getBoolean(ARG_SAVE_IN_PUBLIC_STORAGE, false)
         primaryId = task.primaryId
-        setupNotification(applicationContext)
+        
+        setForegroundAsync(setupNotification(applicationContext))
+        
         updateNotification(
             applicationContext,
             filename ?: url,
@@ -310,7 +312,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                 httpConn.connectTimeout = timeout
                 httpConn.readTimeout = timeout
                 httpConn.instanceFollowRedirects = false // Make the logic below easier to detect redirections
-                httpConn.setRequestProperty("User-Agent", "Mozilla/5.0...")
+                httpConn.setRequestProperty("User-Agent", "BK_CI APP")
 
                 // setup request headers if it is set
                 setupHeaders(httpConn, headers)
@@ -461,7 +463,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                 }
                 taskDao!!.updateTask(id.toString(), status, progress)
                 updateNotification(context, actualFilename, status, progress, pendingIntent, true)
-                log(if (isStopped) "Download canceled" else "File downloaded")
+                log(if (isStopped) "HTTP OK Download canceled" else "File downloaded")
             } else {
                 val loadedTask = taskDao!!.loadTask(id.toString())
                 val status =
