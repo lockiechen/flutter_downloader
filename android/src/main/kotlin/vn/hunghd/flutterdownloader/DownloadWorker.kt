@@ -21,7 +21,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.work.Worker
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.ForegroundInfo
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -141,6 +143,8 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
         if (task != null && task.status == DownloadStatus.ENQUEUED) {
             updateNotification(context, filename ?: url, DownloadStatus.CANCELED, -1, null, true)
             taskDao?.updateTask(id.toString(), DownloadStatus.CANCELED, lastProgress)
+        } else if (task != null) {
+            taskDao?.updateTask(id.toString(), true)
         }
     }
 
@@ -184,8 +188,9 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             inputData.getBoolean(ARG_OPEN_FILE_FROM_NOTIFICATION, false)
         saveInPublicStorage = inputData.getBoolean(ARG_SAVE_IN_PUBLIC_STORAGE, false)
         primaryId = task.primaryId
-        
-        setForegroundAsync(setupNotification(applicationContext))
+        if (showNotification) {
+            setForegroundAsync(setupNotification(applicationContext, task.primaryId))
+        }
         
         updateNotification(
             applicationContext,
@@ -601,8 +606,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             return 0
         }
 
-    private fun setupNotification(context: Context) {
-        if (!showNotification) return
+    private fun setupNotification(context: Context, primaryId: Int): ForegroundInfo {
         // Make a channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create the NotificationChannel
@@ -618,7 +622,12 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             val notificationManager: NotificationManagerCompat = NotificationManagerCompat.from(context)
             notificationManager.createNotificationChannel(channel)
         }
+        val notification = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
+            .setSmallIcon(notificationIconRes)
+            .build()
+        return ForegroundInfo(primaryId, notification)
     }
+
 
     private fun updateNotification(
         context: Context,
@@ -638,6 +647,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+
             when (status) {
                 DownloadStatus.RUNNING -> {
                     if (progress <= 0) {
