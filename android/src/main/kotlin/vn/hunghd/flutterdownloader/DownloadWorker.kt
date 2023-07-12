@@ -15,7 +15,6 @@ import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -24,6 +23,7 @@ import androidx.work.Worker
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.ForegroundInfo
+import com.tencent.mars.xlog.Log
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor

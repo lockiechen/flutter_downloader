@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.BackoffPolicy
@@ -14,6 +15,9 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
+import com.tencent.mars.xlog.Log
+import com.tencent.mars.xlog.Xlog
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
@@ -22,6 +26,7 @@ import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+
 
 private const val invalidTaskId = "invalid_task_id"
 private const val invalidStatus = "invalid_status"
@@ -48,6 +53,20 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
             val dbHelper: TaskDbHelper = TaskDbHelper.getInstance(context)
             taskDao = TaskDao(dbHelper)
         }
+        System.loadLibrary("c++_shared");
+        System.loadLibrary("marsxlog");
+//        System.loadLibrary("native-lib");
+
+        val logPath = Environment.getExternalStorageDirectory().absolutePath + "/Android/data/com.devopsapp/devopsappLog/xlog"
+        val cacheDir = Environment.getExternalStorageDirectory().absolutePath + "/Android/data/com.devopsapp/xlog";
+        println("logPath: $logPath, $cacheDir");
+        //init xlog
+
+        val xlog = Xlog()
+        Log.setLogImp(xlog)
+        Log.setConsoleLogOpen(true)
+        Log.appenderOpen(Xlog.LEVEL_ALL, Xlog.AppednerModeAsync, cacheDir, logPath, "DEVOPS_APP", 0)
+
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
