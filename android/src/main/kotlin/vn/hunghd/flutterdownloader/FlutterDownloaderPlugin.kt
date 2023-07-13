@@ -57,11 +57,11 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
         System.loadLibrary("marsxlog");
 //        System.loadLibrary("native-lib");
 
-        val logPath = Environment.getExternalStorageDirectory().absolutePath + "/Android/data/com.devopsapp/devopsappLog/xlog"
-        val cacheDir = Environment.getExternalStorageDirectory().absolutePath + "/Android/data/com.devopsapp/xlog";
+        val logPath = Environment.getExternalStorageDirectory().absolutePath + "/Android/data/${context?.packageName}/files/xlog"
+        val cacheDir = Environment.getExternalStorageDirectory().absolutePath + "/Android/data/${context?.packageName}/files/cacheXlog";
         println("logPath: $logPath, $cacheDir");
+        
         //init xlog
-
         val xlog = Xlog()
         Log.setLogImp(xlog)
         Log.setConsoleLogOpen(true)
