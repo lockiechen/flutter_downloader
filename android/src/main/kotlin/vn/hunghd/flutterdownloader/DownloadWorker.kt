@@ -218,6 +218,9 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
         } catch (e: Exception) {
             updateNotification(applicationContext, filename ?: url, DownloadStatus.FAILED, -1, null, true)
             taskDao?.updateTask(id.toString(), DownloadStatus.FAILED, lastProgress)
+            log("download exception: " + e.stackTrace.toString());
+            log("download exception message: " + e.message);
+            log("download exception message： $e");
             e.printStackTrace()
             dbHelper = null
             taskDao = null
@@ -479,6 +482,8 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             }
         } catch (e: IOException) {
             taskDao!!.updateTask(id.toString(), DownloadStatus.FAILED, lastProgress)
+            log("download io exception message: " + e.message);
+            log("download io exception message: $e");
             updateNotification(context, actualFilename ?: fileURL, DownloadStatus.FAILED, -1, null, true)
             e.printStackTrace()
         } finally {
