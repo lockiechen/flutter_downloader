@@ -350,12 +350,13 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             httpConn!!.connect()
             val contentType: String
             if ((responseCode == HttpURLConnection.HTTP_OK || isResume && responseCode == HttpURLConnection.HTTP_PARTIAL) && !isStopped) {
-                contentType = httpConn.contentType
+                contentType = (getContentTypeWithoutCharset(httpConn.contentType) ?: httpConn.contentType) as String
                 val contentLength: Long =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) httpConn.contentLengthLong else httpConn.contentLength.toLong()
                 log("Content-Type = $contentType")
+                log("Content-With-charset = ${httpConn.contentType}")
                 log("Content-Length = $contentLength")
-                val charset = getCharsetFromContentType(contentType)
+                val charset = getCharsetFromContentType(httpConn.contentType)
                 log("Charset = $charset")
                 if (!isResume) {
                     // try to extract filename from HTTP headers if it is not given by user
