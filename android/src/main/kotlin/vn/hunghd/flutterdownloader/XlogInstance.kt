@@ -17,7 +17,7 @@ object XLogManager {
 
         Log.setConsoleLogOpen(true);
 
-        val appenderMode = if (!BuildConfig.DEBUG) Xlog.AppednerModeSync else Xlog.AppednerModeAsync;
+        val appenderMode = if (BuildConfig.DEBUG) Xlog.AppednerModeSync else Xlog.AppednerModeAsync;
         Log.appenderOpen(Xlog.LEVEL_ALL, appenderMode, CACHE_PATH, LOG_PATH, "DEVOPS_APP", 0);
 
     }
