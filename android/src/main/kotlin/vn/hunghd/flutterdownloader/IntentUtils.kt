@@ -25,6 +25,7 @@ object IntentUtils {
         } else {
             intent.setDataAndType(Uri.fromFile(file), mime)
         }
+        println("saveFilePath: $mime")
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         return intent
@@ -42,6 +43,7 @@ object IntentUtils {
         try {
             inputFile = FileInputStream(path)
             mime = URLConnection.guessContentTypeFromStream(inputFile) // fails sometimes
+            println("saveFilePath1: $mime")
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -58,6 +60,7 @@ object IntentUtils {
         }
         if (mime != null) {
             intent = buildIntent(context, file, mime)
+            println("saveFilePath2: $mime")
             if (canBeHandled(context, intent)) return intent
         }
         return null
@@ -66,6 +69,7 @@ object IntentUtils {
     private fun canBeHandled(context: Context, intent: Intent): Boolean {
         val manager = context.packageManager
         val results = manager.queryIntentActivities(intent, 0)
+        println("results, $results")
         // return if there is at least one app that can handle this intent
         return results.size > 0
     }
