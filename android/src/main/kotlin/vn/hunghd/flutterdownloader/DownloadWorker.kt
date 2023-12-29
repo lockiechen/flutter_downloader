@@ -835,6 +835,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
     }
 
     private fun log(message: String) {
+        Log.d(TAG, debug.toString());
         if (debug) {
             Log.d(TAG, message)
         }
