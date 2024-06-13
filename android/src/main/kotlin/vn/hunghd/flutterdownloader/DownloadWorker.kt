@@ -65,7 +65,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
     private var taskDao: TaskDao? = null
     private var showNotification = false
     private var clickToOpenDownloadedFile = false
-    private var debug = false
+    private var debug = true
     private var ignoreSsl = false
     private var lastProgress = 0
     private var primaryId = 0
@@ -161,7 +161,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             ?: throw IllegalArgumentException("Argument '$ARG_HEADERS' should not be null")
         var isResume: Boolean = inputData.getBoolean(ARG_IS_RESUME, false)
         val timeout: Int = inputData.getInt(ARG_TIMEOUT, 15000)
-        debug = inputData.getBoolean(ARG_DEBUG, false)
+        debug = inputData.getBoolean(ARG_DEBUG, true)
         step = inputData.getInt(ARG_STEP, 10)
         ignoreSsl = inputData.getBoolean(ARG_IGNORESSL, false)
         val res = applicationContext.resources
@@ -836,6 +836,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
 
     private fun log(message: String) {
         Log.d(TAG, debug.toString());
+        Log.i(TAG, message)
         if (debug) {
             Log.d(TAG, message)
         }

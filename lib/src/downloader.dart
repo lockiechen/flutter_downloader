@@ -31,6 +31,7 @@ class FlutterDownloader {
 
   /// If true, more logs are printed.
   static bool get debug => _debug;
+  static dynamic _logger;
 
   /// Initializes the plugin. This must be called before any other method.
   ///
@@ -41,6 +42,7 @@ class FlutterDownloader {
   /// should be never used in production.
   static Future<void> initialize({
     bool debug = false,
+    dynamic logger,
     bool ignoreSsl = false,
   }) async {
     assert(
@@ -49,6 +51,7 @@ class FlutterDownloader {
     );
 
     _debug = debug;
+    _logger = logger;
 
     final callback = PluginUtilities.getCallbackHandle(callbackDispatcher)!;
     await _channel.invokeMethod<void>('initialize', <dynamic>[
@@ -123,7 +126,7 @@ class FlutterDownloader {
           message: '`enqueue` returned null taskId',
         );
       }
-
+      _log('123 Enqueued taskId: $taskId');
       return taskId;
     } on FlutterDownloaderException catch (err) {
       _log('Failed to enqueue. Reason: ${err.message}');
@@ -439,9 +442,12 @@ class FlutterDownloader {
 
   /// Prints [message] to console if [_debug] is true.
   static void _log(String? message) {
-    if (_debug) {
+    try {
       // ignore: avoid_print
+      _logger(message);
       print(message);
+    } catch (e) {
+      print('123logerror, $e');
     }
   }
 }
