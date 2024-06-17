@@ -90,9 +90,9 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
            
            val logPath = context.getExternalFilesDir(null)?.path + "/xlog"
            val cachePath = context.getExternalFilesDir(null)?.path + "/cacheXlog"
-        //    val appenderMode = if (BuildConfig.DEBUG) Xlog.AppednerModeSync else Xlog.AppednerModeAsync;
+            val appenderMode = if (BuildConfig.DEBUG) Xlog.AppednerModeSync else Xlog.AppednerModeAsync;
            val xlog = Xlog()
-           Xlog.open(true, Xlog.LEVEL_ALL, Xlog.AppednerModeSync, cachePath, logPath, "DEVOPS_APP", "demo")
+           Xlog.open(true, Xlog.LEVEL_ALL, appenderMode, cachePath, logPath, "DEVOPS_APP", "demo")
            Log.setLogImp(xlog)
 
        } catch (e: Error) {
