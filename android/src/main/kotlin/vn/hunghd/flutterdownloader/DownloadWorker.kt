@@ -835,17 +835,16 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
     }
 
     private fun log(message: String) {
-        Log.d(TAG, debug.toString());
-        Log.i(TAG, message)
+        Log.d(TAG, message)
+        android.util.Log.d(TAG, message)
         if (debug) {
             Log.d(TAG, message)
         }
     }
 
     private fun logError(message: String) {
-        if (debug) {
-            Log.e(TAG, message)
-        }
+        android.util.Log.e(TAG, message)
+        Log.e(TAG, message)
     }
 
     companion object {

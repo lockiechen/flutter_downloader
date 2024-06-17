@@ -1,12 +1,12 @@
 package vn.hunghd.flutterdownloader
 
-import XLogManager
+import com.tencent.mars.xlog.Log
+import com.tencent.mars.xlog.Xlog
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.BackoffPolicy
@@ -16,6 +16,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
+import com.tencent.mars.BuildConfig
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
@@ -51,10 +52,7 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
             flutterChannel?.setMethodCallHandler(this)
             val dbHelper: TaskDbHelper = TaskDbHelper.getInstance(context)
             taskDao = TaskDao(dbHelper)
-        }
-        
-        XLogManager
-
+        }        
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -77,13 +75,29 @@ class FlutterDownloaderPlugin : MethodChannel.MethodCallHandler, FlutterPlugin {
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         onAttachedToEngine(binding.applicationContext, binding.binaryMessenger)
+        setupXLog(binding.applicationContext)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
         context = null
         flutterChannel?.setMethodCallHandler(null)
         flutterChannel = null
-        XLogManager.close()
+        Log.appenderClose()
+    }
+
+    private fun setupXLog(context: Context) {
+       try {
+           
+           val logPath = context.getExternalFilesDir(null)?.path + "/xlog"
+           val cachePath = context.getExternalFilesDir(null)?.path + "/cacheXlog"
+        //    val appenderMode = if (BuildConfig.DEBUG) Xlog.AppednerModeSync else Xlog.AppednerModeAsync;
+           val xlog = Xlog()
+           Xlog.open(true, Xlog.LEVEL_ALL, Xlog.AppednerModeSync, cachePath, logPath, "DEVOPS_APP", "demo")
+           Log.setLogImp(xlog)
+
+       } catch (e: Error) {
+           android.util.Log.e("Xlog Error", e.toString());
+       }
     }
 
     private fun requireContext() = requireNotNull(context)
