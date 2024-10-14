@@ -1,3 +1,58 @@
+## 1.11.8
+
+- Allow nullable Content-Yype (#966)
+- Dependencies update (#952)
+  - Gradle buildscripts on Android
+  - Bump minimum Android SDK to 21
+  - Bump minimum Flutter to 3.19
+
+## 1.11.7
+
+- Update dependencies (#946)
+- Update CI workflows (#945)
+- Bump `compileSdk` to 34 (#944)
+
+## 1.11.6
+
+- No release notes were provided
+
+## 1.11.5
+
+- Republish fixes for previous verison
+
+## 1.11.4
+
+- Fix for not working after upgrade to IOS 17 and Xcode 15 (#899)
+- fix for Issue with Spaces and Parentheses in File Names (#904)
+
+## 1.11.3
+
+- Fix for file name not being saved (#894)
+
+## 1.11.2
+
+- Security update for iOS (#887)
+- Support file store in any iOS directory (#829)
+
+## 1.11.1
+
+- Don't crash when `FlutterDownloader.registerCallback()` wasn't called (#879)
+
+## 1.11.0
+
+- Convert `DownloadTaskStatus` into an `enum` (#835)
+
+## 1.10.7
+
+- Override `operator ==` and `hashCode` for `DownloadTask` (#875)
+
+## 1.10.6
+
+- Fix `delete()` not working when file isn't saved to public storage (#871)
+- Update CI workflows on GitHub Actions (#872)
+- Bump native Android dependencies and Gradle (#873)
+- Bump minimum Flutter version to 3.10 (#873)
+
 ## 1.10.5
 
 - Make the project compile when the app not doesn't have dependency on Kotlin

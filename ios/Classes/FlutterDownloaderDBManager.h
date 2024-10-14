@@ -1,5 +1,5 @@
 //
-//  DBManager.h
+//  FlutterDownloaderDBManager.h
 //  Runner
 //
 //  Author: GABRIEL THEODOROPOULOS.
@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface DBManager : NSObject
+@interface FlutterDownloaderDBManager : NSObject
 
 @property (nonatomic, strong) NSMutableArray *arrColumnNames;
 
@@ -19,8 +19,9 @@
 
 -(instancetype)initWithDatabaseFilePath:(NSString *)dbFilePath;
 
--(NSArray *)loadDataFromDB:(NSString *)query;
+-(NSArray *)loadDataFromDB:(NSString *)query withParameters:(NSArray *)parameters;
 
--(void)executeQuery:(NSString *)query;
+
+-(void)executeQuery:(NSString *)query withParameters:(NSArray *)parameters;
 
 @end

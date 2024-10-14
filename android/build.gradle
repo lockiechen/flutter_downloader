@@ -1,5 +1,7 @@
+group = "vn.hunghd.flutterdownloader"
+version = "1.0-SNAPSHOT"
+
 buildscript {
-    ext.kotlin_version = "1.7.22"
     repositories {
         google()
         mavenCentral()
@@ -8,30 +10,24 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:7.2.2"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:11.0.0"
+        classpath "com.android.tools.build:gradle:7.4.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:11.5.0"
     }
+}
+
+repositories {
+    google()
+    mavenCentral()
 }
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 apply plugin: "org.jlleitschuh.gradle.ktlint"
 
-group "vn.hunghd.flutterdownloader"
-version "1.0-SNAPSHOT"
-
-rootProject.allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        jcenter()
-    }
-}
-
 android {
-    namespace "vn.hunghd.flutterdownloader"
-    compileSdk 32
+    namespace = "vn.hunghd.flutterdownloader"
+    compileSdk = 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -39,22 +35,24 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_1_8
+        // allWarningsAsErrors = true // TODO(bartekpacia): Re-enable
     }
 
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
+        test.java.srcDirs += "src/test/kotlin"
     }
 
     defaultConfig {
-        minSdk 19
-        targetSdk 32
+        minSdk = 21
+        targetSdk = 34
     }
 }
 
 dependencies {
     implementation "com.tencent.mars:mars-xlog:1.2.6"
-    implementation "androidx.work:work-runtime:2.7.1"
-    implementation "androidx.annotation:annotation:1.5.0"
-    implementation "androidx.core:core-ktx:1.9.0"
+    compileOnly "androidx.annotation:annotation:1.6.0"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.work:work-runtime:2.9.0"
 }

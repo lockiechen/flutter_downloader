@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:android_path_provider/android_path_provider.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -64,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     _port.listen((dynamic data) {
       final taskId = (data as List<dynamic>)[0] as String;
-      final status = DownloadTaskStatus(data[1] as int);
+      final status = DownloadTaskStatus.fromInt(data[1] as int);
       final progress = data[2] as int;
 
       print(
@@ -138,9 +137,11 @@ class _MyHomePageState extends State<MyHomePage> {
             return DownloadListItem(
               data: item,
               onTap: (task) async {
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+
                 final success = await _openDownloadedFile(task);
                 if (!success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     const SnackBar(
                       content: Text('Cannot open this file'),
                     ),
@@ -193,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontSize: 20,
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -363,20 +364,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<String?> _getSavedDir() async {
     String? externalStorageDirPath;
+    externalStorageDirPath =
+        (await getApplicationDocumentsDirectory()).absolute.path;
 
-    if (Platform.isAndroid) {
-      try {
-        externalStorageDirPath = await AndroidPathProvider.downloadsPath;
-      } catch (err, st) {
-        print('failed to get downloads path: $err, $st');
-
-        final directory = await getExternalStorageDirectory();
-        externalStorageDirPath = directory?.path;
-      }
-    } else if (Platform.isIOS) {
-      externalStorageDirPath =
-          (await getApplicationDocumentsDirectory()).absolute.path;
-    }
     return externalStorageDirPath;
   }
 
@@ -403,7 +393,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ],
-            )
+            ),
         ],
       ),
       body: Builder(
