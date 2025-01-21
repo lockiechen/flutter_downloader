@@ -52,6 +52,7 @@ import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import android.os.storage.StorageManager
 
 class DownloadWorker(context: Context, params: WorkerParameters) :
     Worker(context, params),
@@ -151,6 +152,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
     override fun doWork(): Result {
         dbHelper = TaskDbHelper.getInstance(applicationContext)
         taskDao = TaskDao(dbHelper!!)
+
         val url: String =
             inputData.getString(ARG_URL) ?: throw IllegalArgumentException("Argument '$ARG_URL' should not be null")
         val filename: String? =
@@ -216,11 +218,22 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             taskDao = null
             Result.success()
         } catch (e: Exception) {
-            updateNotification(applicationContext, filename ?: url, DownloadStatus.FAILED, -1, null, true)
+            val (errorCode, errorMessage) = when (e) {
+                is InsufficientStorageException -> {
+                    ERROR_INSUFFICIENT_SPACE to e.message
+                }
+                else -> {
+                    null to e.message
+                }
+            }
+            
             taskDao?.updateTask(id.toString(), DownloadStatus.FAILED, lastProgress)
-            log("download exception: " + e.stackTrace.toString());
-            log("download exception message: " + e.message);
-            log("download exception message： $e");
+            log("Download failed: $errorMessage")
+            updateNotification(applicationContext, filename ?: url, DownloadStatus.FAILED, -1, null, true)
+            
+            // Send error to Flutter
+            sendUpdateProcessEvent(DownloadStatus.FAILED, -1, errorMessage ?: "")
+            
             e.printStackTrace()
             dbHelper = null
             taskDao = null
@@ -328,6 +341,39 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                 if (isResume) {
                     downloadedBytes = setupPartialDownloadedDataHeader(httpConn, actualFilename, savedDir)
                 }
+
+                // Check content length before proceeding with download
+                val contentLength: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) 
+                    httpConn.contentLengthLong 
+                else 
+                    httpConn.contentLength.toLong()
+                    
+                // Check available storage space
+                val requiredSpace = contentLength * 2
+                val availableSpace = when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && saveInPublicStorage -> {
+                        val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+                        val volumes = storageManager.storageVolumes
+                        volumes.firstOrNull()?.let { volume ->
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                volume.directory?.freeSpace ?: 0
+                            } else {
+                                File(Environment.getExternalStorageDirectory().path).freeSpace
+                            }
+                        } ?: 0
+                    }
+                    else -> {
+                        File(savedDir).freeSpace
+                    }
+                }
+
+                log("Required space: ${requiredSpace/1024/1024/1024}GB")
+                log("Available space: ${availableSpace/1024/1024/1024}GB")
+
+                if (availableSpace < requiredSpace) {
+                    throw InsufficientStorageException("Required: ${requiredSpace/1024/1024/1024}GB, Available: ${availableSpace/1024/1024/1024}GB")
+                }
+
                 responseCode = httpConn.responseCode
                 when (responseCode) {
                     HttpURLConnection.HTTP_MOVED_PERM,
@@ -484,11 +530,9 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                 log(if (isStopped) "Download canceled" else "Server replied HTTP code: $responseCode")
             }
         } catch (e: IOException) {
-            taskDao!!.updateTask(id.toString(), DownloadStatus.FAILED, lastProgress)
-            log("download io exception message: " + e.message);
-            log("download io exception message: $e");
-            updateNotification(context, actualFilename ?: fileURL, DownloadStatus.FAILED, -1, null, true)
             e.printStackTrace()
+
+            throw e
         } finally {
             if (outputStream != null) {
                 outputStream.flush()
@@ -731,13 +775,15 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
         }
     }
 
-    private fun sendUpdateProcessEvent(status: DownloadStatus, progress: Int) {
+    private fun sendUpdateProcessEvent(status: DownloadStatus, progress: Int, error: String? = null) {
         val args: MutableList<Any> = ArrayList()
         val callbackHandle: Long = inputData.getLong(ARG_CALLBACK_HANDLE, 0)
         args.add(callbackHandle)
         args.add(id.toString())
         args.add(status.ordinal)
         args.add(progress)
+        args.add(error ?: "")
+
         synchronized(isolateStarted) {
             if (!isolateStarted.get()) {
                 isolateQueue.add(args)
@@ -863,6 +909,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
         const val ARG_STEP = "step"
         const val ARG_SAVE_IN_PUBLIC_STORAGE = "save_in_public_storage"
         const val ARG_IGNORESSL = "ignoreSsl"
+        const val ERROR_INSUFFICIENT_SPACE = "insufficient_space"
         private val TAG = DownloadWorker::class.java.simpleName
         private const val BUFFER_SIZE = 4096
         private const val CHANNEL_ID = "FLUTTER_DOWNLOADER_NOTIFICATION"
@@ -914,3 +961,5 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
         Handler(context.mainLooper).post { startBackgroundIsolate(context) }
     }
 }
+
+private class InsufficientStorageException(message: String) : Exception(message)

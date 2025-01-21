@@ -17,6 +17,7 @@ typedef DownloadCallback = void Function(
   String id,
   int status,
   int progress,
+  String error,
 );
 
 /// Provides access to all functions of the plugin in a single place.
@@ -408,6 +409,7 @@ class FlutterDownloader {
   ///  String id,
   ///  int status,
   ///  int progress,
+  ///  String error,
   ///  ) {
   ///    final SendPort send = IsolateNameServer.lookupPortByName(
   ///    'downloader_send_port',
