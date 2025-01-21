@@ -32,6 +32,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -527,7 +528,8 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                     if (isStopped) if (loadedTask!!.resumable) DownloadStatus.PAUSED else DownloadStatus.CANCELED else DownloadStatus.FAILED
                 taskDao!!.updateTask(id.toString(), status, lastProgress)
                 updateNotification(context, actualFilename ?: fileURL, status, -1, null, true)
-                log(if (isStopped) "Download canceled" else "Server replied HTTP code: $responseCode")
+                val responseBody = httpConn.errorStream.bufferedReader().readText()
+                log(if (isStopped) "Download canceled" else "Server replied HTTP code: $responseCode , body: $responseBody")
             }
         } catch (e: IOException) {
             e.printStackTrace()
