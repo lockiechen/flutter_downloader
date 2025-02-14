@@ -32,6 +32,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.FlutterCallbackInformation
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -221,6 +222,9 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
             val (errorCode, errorMessage) = when (e) {
                 is InsufficientStorageException -> {
                     ERROR_INSUFFICIENT_SPACE to e.message
+                }
+                is IOException -> {
+                    ERROR_NETWORK to e.message
                 }
                 else -> {
                     null to e.message
@@ -527,11 +531,12 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
                     if (isStopped) if (loadedTask!!.resumable) DownloadStatus.PAUSED else DownloadStatus.CANCELED else DownloadStatus.FAILED
                 taskDao!!.updateTask(id.toString(), status, lastProgress)
                 updateNotification(context, actualFilename ?: fileURL, status, -1, null, true)
-                log(if (isStopped) "Download canceled" else "Server replied HTTP code: $responseCode")
+                val responseBody = httpConn.errorStream.bufferedReader().readText()
+                log(if (isStopped) "Download canceled" else "Server replied HTTP code: $responseCode , body: $responseBody")
+                throw IOException("Server replied HTTP code: $responseCode, body: $responseBody")
             }
         } catch (e: IOException) {
             e.printStackTrace()
-
             throw e
         } finally {
             if (outputStream != null) {
@@ -910,6 +915,7 @@ class DownloadWorker(context: Context, params: WorkerParameters) :
         const val ARG_SAVE_IN_PUBLIC_STORAGE = "save_in_public_storage"
         const val ARG_IGNORESSL = "ignoreSsl"
         const val ERROR_INSUFFICIENT_SPACE = "insufficient_space"
+        const val ERROR_NETWORK = "network_error"
         private val TAG = DownloadWorker::class.java.simpleName
         private const val BUFFER_SIZE = 4096
         private const val CHANNEL_ID = "FLUTTER_DOWNLOADER_NOTIFICATION"
